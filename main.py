@@ -1,7 +1,7 @@
 from scapy.layers.l2 import Ether, ARP, srp
 from scapy.layers.inet import IP, TCP, sr
-import psutil, ipaddress
-
+import psutil, ipaddress, socket, threading
+from constantes import *
 
 def getNetwork():
     dico = psutil.net_if_addrs()
@@ -25,13 +25,13 @@ def main():
     
     #Ajout de l'IP Réseau (il enverra à chaque ip)
     trame.pdst = getNetwork()
-    trame.show()
-    
+    # trame.show()
+    print("Scan des ips en cours (10sec...)")
     # Envoi de la trame
-    reponse, nonrep = srp(trame, timeout=3)
+    reponse, nonrep = srp(trame, timeout=10, verbose=0)
     
     
-    print("Réponses")
+    print("----------------------------- SCAN DES MACs -----------------------------")
     # Résumé global
     # reponse.summary(lambda s,r: r.sprintf("%Ether.src% %ARP.psrc%"))
     
@@ -49,6 +49,8 @@ def main():
         print(f"{i} - {j}")
         
     # Scan des ports : 
+    print("\n----------------------------- SCAN DES PORTS -----------------------------")
+    
     for k, v in dicoReponse.items():
         dicoReponse[k] = {"MAC" : v, "PORTS" : []}        
         
@@ -58,7 +60,39 @@ def main():
         for j in range(len(rep)):
             if rep[j][1]["TCP"].flags == "SA":
                 dicoReponse[i]["PORTS"].append(rep[j][0][TCP].dport)
-        print(f"IP : {i} - PORTS : {dicoReponse[i]["PORTS"]} ")
-        
+        versionning(i, dicoReponse[i]["PORTS"])    
+    
+
+def versionning(ip, listPorts:list):
+    #D'après cet article : https://medium.com/@rajesh.p3807/building-a-simple-python-banner-grabbing-script-a-step-by-step-guide-6538f2d26804
+    if len(listPorts) > 0:
+        print(f"IP : {ip}")
+        for port in listPorts:
+            print(f"\tPORT : {port} - ", end="")
+            banner(ip, port)
+    
+    
+def banner(ip, port):
+    sck = socket.socket()
+    sck.settimeout(5)
+    sck.connect((ip, port))
+    try:
+        if port in REQUETES_PORTS.keys():
+            sck.send(REQUETES_PORTS[port])
+            version = sck.recv(1024).decode().strip().split("\r\n")
+            for ligne in version:
+                if ligne.lower()[0:7] == "server:":
+                    print(f"Version : {ligne[7:]}", end="\n")
+                    
+        else:                
+            version = sck.recv(1024).decode().strip()
+            print(f"Version : {version}")
+                    
+    except (TimeoutError, ConnectionRefusedError):
+        print("Pas de banniere")
+    finally:
+        sck.close()
+
+
 if __name__ == "__main__":
     main()
