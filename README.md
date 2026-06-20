@@ -90,10 +90,10 @@ Certains services annoncent leur version dès la connexion (SSH). D'autres atten
 
 ## Stack technique
 
-- [Scapy](https://scapy.net/) — construction et envoi de paquets réseau
-- [psutil](https://github.com/giampaolo/psutil) — détection de l'interface réseau locale
-- [ipaddress](https://docs.python.org/3/library/ipaddress.html) — calcul du sous-réseau
-- [socket](https://docs.python.org/3/library/socket.html) — banner grabbing
+- [Scapy](https://scapy.net/) : construction et envoi de paquets réseau
+- [psutil](https://github.com/giampaolo/psutil) : détection de l'interface réseau locale
+- [ipaddress](https://docs.python.org/3/library/ipaddress.html) : détection du réseau local
+- [socket](https://docs.python.org/3/library/socket.html) : banner grabbing
 
 ---
 
