@@ -52,7 +52,7 @@ IP : 192.168.1.169
 ### Installation
 
 ```bash
-git clone https://github.com/ton-user/mymap.git
+git clone https://github.com/julsmllr/mymap.git
 cd mymap
 uv sync
 ```
