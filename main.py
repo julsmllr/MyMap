@@ -59,16 +59,26 @@ def main():
     # Scan des ports : 
     print("\n----------------------------- SCAN DES PORTS -----------------------------")
      
-        
+    threads = []
     for machine in lstMachine:
-        lst_packet_TCP = [IP(dst = machine.ip)/TCP(dport = j, flags="S") for j in range(1, 1025)] #Pour avoir des objets différents et pas un même pointeur sur chaque packet sur chaque port
-        rep, non_rep = sr(lst_packet_TCP, timeout=5, verbose=0)
-        for j in range(len(rep)):
-            if rep[j][1]["TCP"].flags == "SA":
-                newPort = Port(rep[j][0][TCP].dport, EtatPort.FILTRE)
-                machine.ports.append(newPort)
-        versionning(machine.ip, machine.ports)    
+        t = threading.Thread(target=scanPortMachine, args=(machine,))
+        threads.append(t)
+        t.start()
+        
+    for t in threads:
+        t.join()
+    
+    for machine in lstMachine:
         machine.afficherPorts()
+
+def scanPortMachine(machine: Machine):
+    lst_packet_TCP = [Ether(dst = machine.mac)/IP(dst = machine.ip)/TCP(dport = j, flags="S") for j in range(1, 1025)] #Pour avoir des objets différents et pas un même pointeur sur chaque packet sur chaque port
+    rep, non_rep = srp(lst_packet_TCP, timeout=5, verbose=0)
+    for j in range(len(rep)):
+        if rep[j][1]["TCP"].flags == "SA":
+            newPort = Port(rep[j][0][TCP].dport, EtatPort.OUVERT)
+            machine.ports.append(newPort)
+    versionning(machine.ip, machine.ports)    
     
 
 def versionning(ip, listPorts:list):

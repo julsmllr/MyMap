@@ -14,4 +14,4 @@ class Port():
         self.banner = ""
     
     def afficherPort(self):
-        print(f"\t- {self.numero} ({self.name}) - {self.banner} - ETAT = {self.etat}")
+        print(f"\t- {self.numero} ({self.name}) - {self.banner} - ETAT = {self.etat.value}")
