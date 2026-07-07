@@ -20,34 +20,7 @@ function doneIcon(id) {
     </svg>`;
 }
 
-window.addEventListener('load', () => {
-  // Step 1 — interface
-  setTimeout(() => {
-    splashStep('step1', 'step-done', DETECTED_IF + ' (192.168.1.134)', 'found', false);
-    doneIcon('step1');
-    // Step 2 — subnet
-    splashStep('step2', 'step-running', 'Calcul en cours…', '', true);
-  }, 900);
 
-  setTimeout(() => {
-    splashStep('step2', 'step-done', DETECTED_NET, 'found', false);
-    doneIcon('step2');
-    // Step 3 — deps
-    splashStep('step3', 'step-running', 'Vérification…', '', true);
-  }, 1800);
-
-  setTimeout(() => {
-    splashStep('step3', 'step-done', 'Scapy 2.7.0 · psutil 6.1 · OK', 'found', false);
-    doneIcon('step3');
-    // Show pill + CTA
-    document.getElementById('netDisplay').textContent = DETECTED_NET;
-    document.getElementById('ifDisplay').textContent  = DETECTED_IF;
-    document.getElementById('netPill').classList.add('visible');
-    setTimeout(() => {
-      document.getElementById('splashCta').classList.add('visible');
-    }, 300);
-  }, 2700);
-});
 
 function enterApp() {
   // propagate network info
