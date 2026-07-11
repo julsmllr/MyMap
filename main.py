@@ -14,7 +14,7 @@ def getNetwork():
     mask = dico["Wi-Fi"][1][2]
 
     network = ipaddress.IPv4Network(f'{ip}/{mask}', strict=False)
-    return str(network)
+    return {"interface": "WIFI", "ip": ip, "network": str(network)}
     
 def main():
     
